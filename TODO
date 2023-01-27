@@ -1,0 +1,25 @@
+##Candidate
+
+user register 
+user login
+
+view jobs list
+apply jobs
+view applied jobs
+cancel applied jobs
+view employer list
+view single employer
+view employer/jobs
+accept/reject interview invitation
+
+
+##Employer
+employer register
+employer login
+job add
+job update
+job list view
+job delete
+view received applications
+view candidate profile
+accept/reject application
