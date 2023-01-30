@@ -9,12 +9,9 @@ export const login = async (req, res) => {
 
         const company = await Company.findOne({ email: email })
 
-        if (!company) return apiresponse.notfound(res, 'employer not found.')
+        if (!company) return apiresponse.notfound(res, 'company not found.')
 
-        const isPasswordMatched = await bcrypt.compare(
-            password,
-            company.password
-        )
+        const isPasswordMatched = bcrypt.compareSync(password, company.password)
 
         if (!isPasswordMatched) return apiresponse.failed(res, 'Wrong password')
 
@@ -25,6 +22,7 @@ export const login = async (req, res) => {
                 expiresIn: '2h'
             }
         )
+        //TODO fire login event and send email
         return apiresponse.success(res, { token: token })
     } catch (error) {
         return apiresponse.exception(res, error)
@@ -33,7 +31,8 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
     try {
-        const { name, email, mobile, password } = req.body
+        const { name, email, mobile, password, logo, location, about } =
+            req.body
 
         let company = await Company.findOne({ email: email })
         if (company) return apiresponse.failed(res, 'Emial already in use.')
@@ -43,8 +42,17 @@ export const register = async (req, res) => {
 
         const hashPassword = bcrypt.hashSync(password, 10)
 
-        company = await Company.create({})
+        company = await Company.create({
+            name,
+            email,
+            mobile,
+            password: hashPassword,
+            logo: req.file.name, //use multer
+            location,
+            about
+        })
 
+        //TODO fire register event and send email
         return apiresponse.success(res, company, 'Registration successfully.')
     } catch (error) {
         return apiresponse.exception(res, error)
@@ -62,6 +70,7 @@ export const changePassword = async (req, res) => {
             password: hasPassword
         })
 
+        //TODO fire password changed event and send email
         return apiresponse.success(res, null, 'Password changed successfully.')
     } catch (error) {
         return apiresponse.exception(res, error)

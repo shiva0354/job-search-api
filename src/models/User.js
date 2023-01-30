@@ -66,7 +66,8 @@ const UserSchema = mongoose.Schema(
         },
         applications: {
             type: Array
-        }
+        },
+        resumePath: String
     },
     { timestamps: true }
 )

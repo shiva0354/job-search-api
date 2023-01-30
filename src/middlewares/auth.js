@@ -1,41 +1,44 @@
 import jwt from 'jsonwebtoken'
-import { appConfig } from '../config/AppConfig'
-import * as apiresponse from '../library/Apiresponse.js'
+import { appConfig } from '../config/AppConfig.js'
+import * as Apiresponse from '../library/Apiresponse.js'
 
-export const authEmployer = async (req, res, next) => {
+export const authCompany = async (req, res, next) => {
     try {
-        const verified = verifyToken(req, res)
+        const verified = verifyToken(req)
 
-        if (verified.type != 'employer')
-            return apiresponse.forbidden(res, 'Access Denied')
+        if (verified.type != 'company')
+            return Apiresponse.forbidden(res, 'Access Denied')
 
-        req.employer = verified
+        req.company = verified
         next()
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return Apiresponse.exception(res, error)
     }
 }
 
-export const authUser = async (req, res, next) => {
+export const authUser = (req, res, next) => {
     try {
-        const verified = verifyToken(req, res)
+        const verified = verifyToken(req)
 
-        if (verified.type != 'user')
-            return apiresponse.forbidden(res, 'Access Denied')
+        if (!verified || verified.type != 'user')
+            return Apiresponse.forbidden(res, 'Access Denied')
 
         req.user = verified
         next()
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return Apiresponse.exception(res, error)
     }
 }
 
-const verifyToken = async (req, res) => {
-    let token = req.headers['Authorization']
+const verifyToken = (req) => {
+    let token = req.headers['authorization']
 
-    if (!token) return apiresponse.forbidden(res, 'Access denied.')
+    if (!token) return false
 
-    if (token.startsWith('Bearer ')) token.splice(7, token.length).trimLeft()
+    if (token.startsWith('Bearer '))
+        token = token.slice(7, token.length).trimLeft()
+
     const verified = jwt.verify(token, appConfig.jwt_secret)
+
     return verified
 }

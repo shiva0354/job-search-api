@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt'
-import jwt from 'jwt'
-import User from '../../models/user'
+import jwt from 'jsonwebtoken'
+import User from '../../models/User.js'
 import * as apiresponse from '../../library/Apiresponse.js'
+import { appConfig } from '../../config/AppConfig.js'
 
 export const login = async (req, res) => {
     try {
@@ -31,7 +32,7 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
     try {
-        const { name, email, mobile, password } = req.body
+        const { name, email, mobile, password, gender } = req.body
 
         let user = await User.findOne({ email: email })
         if (user) return apiresponse.failed(res, 'Emial already in use.')
@@ -41,7 +42,13 @@ export const register = async (req, res) => {
 
         const hashPassword = bcrypt.hashSync(password, 10)
 
-        user = await User.create({})
+        user = await User.create({
+            name,
+            email,
+            mobile,
+            gender,
+            password: hashPassword
+        })
 
         return apiresponse.success(res, user, 'Registration successfully.')
     } catch (error) {
