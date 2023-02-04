@@ -37,7 +37,7 @@ export const uploadLogo = async (req, res) => {
         const company = await Company.findByIdAndUpdate(
             companyId,
             {
-                logo: ''//
+                logo: req.file.filename
             }
         )
 

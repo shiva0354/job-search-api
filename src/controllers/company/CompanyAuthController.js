@@ -61,7 +61,7 @@ export const register = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     try {
-        const { companyId } = req.params
+        const companyId = req.company.id
         const { password } = req.body
 
         const hasPassword = bcrypt.hashSync(password, 10)
