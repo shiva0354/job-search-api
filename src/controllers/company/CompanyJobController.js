@@ -22,7 +22,7 @@ export const store = async (req, res) => {
         const { title } = req.body
 
         const job = await Job.create({
-            //add data here
+            companyId: companyId
         })
 
         return ApiResponse.success(res, job, 'Job created successfully.')

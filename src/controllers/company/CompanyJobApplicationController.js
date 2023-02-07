@@ -15,7 +15,7 @@ export const index = async (req, res) => {
         if (job.companyId !== companyId)
             return ApiResponse.forbidden(res, 'Not authorised to view.')
 
-        const applications = await JobApplication.find({ 'jobId': jobId })
+        const applications = await JobApplication.find({ jobId: jobId })
 
         return ApiResponse.success(res, applications)
     } catch (error) {
@@ -43,16 +43,23 @@ export const accepReject = async (req, res) => {
     try {
         const companyId = req.company.id
         const { applicationId } = req.params
+        const { status } = req.body
 
         const application = await JobApplication.findById(applicationId)
 
         if (companyId != application.companyId)
             return ApiResponse.forbidden(res, 'Not Authorised to see.')
 
-        if (application.isAccepted)
-            await application.isAccepted = 0
+        if (application.isAccepted) application.isAccepted = false
+        else application.isAccepted = true
 
-        return ApiResponse.success(res, application)
+        application.save()
+
+        return ApiResponse.success(
+            res,
+            application,
+            'Status changed successfully.'
+        )
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

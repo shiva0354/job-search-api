@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../../models/User.js'
-import * as apiresponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
 import { appConfig } from '../../config/AppConfig.js'
 
 export const login = async (req, res) => {
@@ -10,11 +10,11 @@ export const login = async (req, res) => {
 
         const user = await User.findOne({ email: email })
 
-        if (!user) return apiresponse.notfound(res, 'User not found.')
+        if (!user) return ApiResponse.notfound(res, 'User not found.')
 
         const isPasswordMatched = await bcrypt.compare(password, user.password)
 
-        if (!isPasswordMatched) return apiresponse.failed(res, 'Wrong password')
+        if (!isPasswordMatched) return ApiResponse.failed(res, 'Wrong password')
 
         const token = jwt.sign(
             { id: user._id, type: 'user' },
@@ -24,9 +24,9 @@ export const login = async (req, res) => {
             }
         )
 
-        return apiresponse.success(res, { token: token })
+        return ApiResponse.success(res, { token: token })
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -35,10 +35,10 @@ export const register = async (req, res) => {
         const { name, email, mobile, password, gender } = req.body
 
         let user = await User.findOne({ email: email })
-        if (user) return apiresponse.failed(res, 'Emial already in use.')
+        if (user) return ApiResponse.failed(res, 'Emial already in use.')
 
         user = await User.findOne({ email: mobile })
-        if (user) return apiresponse.failed(res, 'Mobile already in use.')
+        if (user) return ApiResponse.failed(res, 'Mobile already in use.')
 
         const hashPassword = bcrypt.hashSync(password, 10)
 
@@ -50,9 +50,9 @@ export const register = async (req, res) => {
             password: hashPassword
         })
 
-        return apiresponse.success(res, user, 'Registration successfully.')
+        return ApiResponse.success(res, user, 'Registration successfully.')
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -67,8 +67,8 @@ export const changePassword = async (req, res) => {
             password: hasPassword
         })
 
-        return apiresponse.success(res, null, 'Password changed successfully.')
+        return ApiResponse.success(res, null, 'Password changed successfully.')
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }

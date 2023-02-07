@@ -16,9 +16,9 @@ export const authCompany = async (req, res, next) => {
     }
 }
 
-export const authUser = (req, res, next) => {
+export const authUser = async (req, res, next) => {
     try {
-        const verified = verifyToken(req)
+        const verified = await verifyToken(req)
 
         if (!verified || verified.type != 'user')
             return Apiresponse.forbidden(res, 'Access Denied')
@@ -38,7 +38,5 @@ const verifyToken = (req) => {
     if (token.startsWith('Bearer '))
         token = token.slice(7, token.length).trimLeft()
 
-    const verified = jwt.verify(token, appConfig.jwt_secret)
-
-    return verified
+    return jwt.verify(token, appConfig.jwt_secret)
 }

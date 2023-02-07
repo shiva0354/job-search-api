@@ -1,9 +1,12 @@
-import * as ApiResponse from '../../library/Apiresponse'
+import * as ApiResponse from '../../library/Apiresponse.js'
 import Job from '../../models/Job.js'
 
 export const jobList = async (req, res) => {
     try {
-        const jobs = await Job.find({ companyId: companyId })
+        const jobs = await Job.find({
+            companyId: companyId,
+            status: 'published'
+        }).sort({ createdAt: -1 })
 
         return ApiResponse.success(res, jobs)
     } catch (error) {

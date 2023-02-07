@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import * as UserAuthController from '../controllers/user/UserAuthController.js'
 import * as UserJobController from '../controllers/user/UserJobController.js'
+import * as UserJobApplicationController from '../controllers/user/UserJobApplicationController.js'
 import * as UserCompanyController from '../controllers/user/UserCompanyController.js'
 import * as UserProfileController from '../controllers/user/UserProfileController.js'
 import { authUser } from '../middlewares/auth.js'
@@ -14,6 +15,7 @@ router.get('/', (req, res) => {
 
 router.post('/register', UserAuthController.register)
 router.post('/login', UserAuthController.login)
+router.post('/change-password', authUser, UserAuthController.changePassword)
 
 router.get('/profile/show', authUser, UserProfileController.show)
 router.put('/profile/update', authUser, UserProfileController.update)
@@ -42,6 +44,14 @@ router.get(
     '/companies/:companyId/jobs',
     authUser,
     UserCompanyController.viewCompanyJobs
+)
+
+router.post('/jobs/:jobId/apply', authUser, UserJobApplicationController.apply)
+router.get('/applications', authUser, UserJobApplicationController.index)
+router.post(
+    '/applications/:applicationId/cancel',
+    authUser,
+    UserJobApplicationController.cancelApplication
 )
 
 export default router

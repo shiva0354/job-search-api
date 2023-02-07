@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt'
-import jwt from 'jwt'
-import Company from '../../models/company.js'
-import * as apiresponse from '../../library/Apiresponse.js'
+import jwt from 'jsonwebtoken'
+import Company from '../../models/Company.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
+import { appConfig } from '../../config/AppConfig.js'
 
 export const login = async (req, res) => {
     try {
@@ -9,23 +10,23 @@ export const login = async (req, res) => {
 
         const company = await Company.findOne({ email: email })
 
-        if (!company) return apiresponse.notfound(res, 'company not found.')
+        if (!company) return ApiResponse.failed(res, 'Wrong username.')
 
         const isPasswordMatched = bcrypt.compareSync(password, company.password)
 
-        if (!isPasswordMatched) return apiresponse.failed(res, 'Wrong password')
+        if (!isPasswordMatched) return ApiResponse.failed(res, 'Wrong password')
 
         const token = jwt.sign(
-            { id: user._id, type: 'company' },
+            { id: company._id, type: 'company' },
             appConfig.jwt_secret,
             {
                 expiresIn: '2h'
             }
         )
         //TODO fire login event and send email
-        return apiresponse.success(res, { token: token })
+        return ApiResponse.success(res, { token: token })
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -33,29 +34,30 @@ export const register = async (req, res) => {
     try {
         const { name, email, mobile, password, logo, location, about } =
             req.body
+        console.log(req.body)
 
         let company = await Company.findOne({ email: email })
-        if (company) return apiresponse.failed(res, 'Emial already in use.')
+        if (company) return ApiResponse.failed(res, 'Email already in use.')
 
-        company = await Company.findOne({ email: mobile })
-        if (company) return apiresponse.failed(res, 'Mobile already in use.')
+        company = await Company.findOne({ mobile: mobile })
+        if (company) return ApiResponse.failed(res, 'Mobile already in use.')
 
         const hashPassword = bcrypt.hashSync(password, 10)
 
         company = await Company.create({
-            name,
-            email,
-            mobile,
+            name: name,
+            email: email,
+            mobile: mobile,
             password: hashPassword,
-            logo: req.file.name, //use multer
-            location,
-            about
+            logo: req.file ? req.file.filename : '', //use multer
+            location: location ?? '',
+            about: about ?? ''
         })
 
         //TODO fire register event and send email
-        return apiresponse.success(res, company, 'Registration successfully.')
+        return ApiResponse.success(res, null, 'Registration successfull.')
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -71,8 +73,8 @@ export const changePassword = async (req, res) => {
         })
 
         //TODO fire password changed event and send email
-        return apiresponse.success(res, null, 'Password changed successfully.')
+        return ApiResponse.success(res, null, 'Password changed successfully.')
     } catch (error) {
-        return apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }

@@ -15,7 +15,7 @@ const JobSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        Requirements: {
+        requirements: {
             type: String,
             required: true
         },
@@ -28,10 +28,6 @@ const JobSchema = mongoose.Schema(
         status: {
             type: String,
             enum: ['pending', 'published', 'rejected']
-        },
-        isPublished: {
-            type: Boolean,
-            default: false
         },
         applications: {
             type: Array
