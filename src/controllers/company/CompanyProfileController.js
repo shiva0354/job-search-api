@@ -39,6 +39,8 @@ export const update = async (req, res) => {
             about
         })
 
+        //TODO implement cache
+
         return ApiResponse.success(res, null, 'Profile updated successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -53,6 +55,7 @@ export const uploadLogo = async (req, res) => {
             logo: req.file.filename
         })
 
+        //TODO implement cache
         return ApiResponse.success(res, null, 'Logo Uploaded successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)

@@ -23,7 +23,7 @@ export const login = async (req, res) => {
                 expiresIn: '2h'
             }
         )
-        //TODO fire login event and send email
+        
         return ApiResponse.success(res, { token: token })
     } catch (error) {
         return ApiResponse.exception(res, error)

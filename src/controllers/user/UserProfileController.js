@@ -6,6 +6,7 @@ export const show = async (req, res) => {
         const userId = req.user.id
         const user = await User.findById(userId)
 
+        //TODO implement cache
         return ApiResponse.success(res, user)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -19,19 +20,21 @@ export const update = async (req, res) => {
         const { name, email, mobile, gender } = req.body
 
         let user = await User.findOne({ email: email, _id: { $ne: userId } })
-        if (user) return ApiResponse.failed(res, 'Emial already in use.')
+        if (user) return ApiResponse.failed(res, 'Email already in use.')
 
         user = await User.findOne({ email: mobile, _id: { $ne: userId } })
         if (user) return ApiResponse.failed(res, 'Mobile already in use.')
 
-        await user.update(userId, {
+        await User.findByIdAndUpdate(userId, {
             name,
             email,
             mobile,
             gender
         })
 
-        return ApiResponse.success(res, user)
+        //TODO implement cache
+
+        return ApiResponse.success(res, null, 'Profile updated successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -44,7 +47,12 @@ export const uploadProfilePicture = async (req, res) => {
             profilePicture: req.file.filename
         })
 
-        return ApiResponse.success(res, user)
+        //TODO implement cache
+        return ApiResponse.success(
+            res,
+            null,
+            'Profile picture updated successfully.'
+        )
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -57,6 +65,7 @@ export const uploadResume = async (req, res) => {
             resumePath: req.file.filename
         })
 
+        //TODO implement cache
         return ApiResponse.success(res, user)
     } catch (error) {
         return ApiResponse.exception(res, error)

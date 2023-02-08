@@ -2,7 +2,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../../models/User.js'
 import * as ApiResponse from '../../library/ApiResponse.js'
-import { appConfig } from '../../config/AppConfig.js'
+import { appConfig, mailConfig } from '../../config/AppConfig.js'
+import { mail } from '../../library/Mail.js'
 
 export const login = async (req, res) => {
     try {
@@ -35,7 +36,7 @@ export const register = async (req, res) => {
         const { name, email, mobile, password, gender } = req.body
 
         let user = await User.findOne({ email: email })
-        if (user) return ApiResponse.failed(res, 'Emial already in use.')
+        if (user) return ApiResponse.failed(res, 'Email already in use.')
 
         user = await User.findOne({ email: mobile })
         if (user) return ApiResponse.failed(res, 'Mobile already in use.')
@@ -50,6 +51,8 @@ export const register = async (req, res) => {
             password: hashPassword
         })
 
+        //TODO fire and email
+
         return ApiResponse.success(res, null, 'Registration successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -58,14 +61,25 @@ export const register = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     try {
-        const { userId } = req.params
+        const userId = req.user.id
         const { password } = req.body
 
-        const hasPassword = bcrypt.hashSync(password, 10)
+        const hashPassword = bcrypt.hashSync(password, 10)
 
-        await User.findByIdAndUpdate(userId, {
-            password: hasPassword
+        const user = await User.findById(userId)
+
+        user.password = hashPassword
+        await user.save()
+
+        //TODO fire an email
+        const { response } = await mail.sendMail({
+            from: `<${mailConfig.mail_from_name}> <${mailConfig.mail_from_address}>`,
+            to: user.email,
+            subject: 'IndiCart-Email-Conformation',
+            html: `Your password has been chnaged`
         })
+
+        console.log(response)
 
         return ApiResponse.success(res, null, 'Password changed successfully.')
     } catch (error) {

@@ -8,6 +8,7 @@ export const viewCompany = async (req, res) => {
 
         const company = await Company.findById(companyId)
 
+        //TODO implement cache
         return ApiResponse.success(res, company)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -24,6 +25,7 @@ export const viewCompanyJobs = async (req, res) => {
 
         const jobs = await Job.find({ companyId: companyId })
 
+        //TODO implement cache
         return ApiResponse.success(res, jobs)
     } catch (error) {
         return ApiResponse.exception(res, error)

@@ -17,6 +17,7 @@ export const index = async (req, res) => {
 
         const applications = await JobApplication.find({ jobId: jobId })
 
+        //TODO implement cache
         return ApiResponse.success(res, applications)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -33,6 +34,7 @@ export const viewApplication = async (req, res) => {
         if (companyId != application.companyId)
             return ApiResponse.forbidden(res, 'Not Authorised to see.')
 
+        // TODO implement cache
         return ApiResponse.success(res, application)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -55,6 +57,7 @@ export const accepReject = async (req, res) => {
 
         application.save()
 
+        //TODO fire an email to candidate regarding status of the application
         return ApiResponse.success(res, null, 'Status changed successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -66,6 +69,7 @@ export const viewCandidate = async (req, res) => {
         const { userId } = req.params
         const user = await User.findById(userId)
 
+        //TODO implement cache
         return ApiResponse.success(res, user)
     } catch (error) {
         return ApiResponse.exception(res, error)

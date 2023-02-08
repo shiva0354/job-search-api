@@ -10,6 +10,8 @@ export const index = async (req, res) => {
             createdAt: -1
         })
 
+        //TODO implement cache
+
         return ApiResponse.success(res, jobs)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -35,6 +37,7 @@ export const store = async (req, res) => {
 
         await Job.create({
             companyId: companyId,
+            industry: company.industry,
             title,
             location: location ?? company.location,
             aboutCompany: company.about,
@@ -46,6 +49,8 @@ export const store = async (req, res) => {
             numberOfOpenings,
             lastDateToApply
         })
+
+        //TODO implement cache
 
         return ApiResponse.success(res, null, 'Job created successfully.')
     } catch (error) {
@@ -83,6 +88,7 @@ export const update = async (req, res) => {
             lastDateToApply
         })
 
+        //TODO implement cache
         return ApiResponse.success(res, null, 'Job updated successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)

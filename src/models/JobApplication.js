@@ -17,7 +17,11 @@ const JobApplicationSchema = mongoose.Schema(
         questions: {
             type: Array
         },
-        isAccepted: Boolean
+        status: {
+            type: String,
+            enum: ['pending', 'accepted', 'rejected', 'cancelled'],
+            default: 'pending'
+        }
     },
     { timestamps: true }
 )
