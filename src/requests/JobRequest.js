@@ -6,7 +6,7 @@ export const create = (req, res, next) => {
         location: 'required|string|max:100',
         keyResponsibities: 'required|string|min:10|max:1000',
         requirements: 'required|string|min:10|max:1000',
-        skillsRequired: 'required|string|min:10|max:1000',
+        skillsRequired: 'required|array',
         salary: 'required|numeric',
         numberOfOpenings: 'required|numeric',
         lastDateToApply: 'required|date'
@@ -20,7 +20,7 @@ export const update = (req, res, next) => {
         // location: 'required|string|max:100',
         keyResponsibities: 'required|string|min:10|max:1000',
         requirements: 'required|string|min:10|max:1000',
-        skillsRequired: 'required|string|min:10|max:1000',
+        skillsRequired: 'required|array',
         salary: 'required|numeric',
         numberOfOpenings: 'required|numeric',
         lastDateToApply: 'required|date'

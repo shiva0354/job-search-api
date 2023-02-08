@@ -1,10 +1,11 @@
-import * as ApiResponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
 import Job from '../../models/Job.js'
 
 export const jobList = async (req, res) => {
     try {
+        const { industry, salary, experience } = req.body
+
         const jobs = await Job.find({
-            companyId: companyId,
             status: 'published'
         }).sort({ createdAt: -1 })
 

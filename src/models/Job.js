@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const JobSchema = mongoose.Schema(
     {
+        companyId: String,
         title: {
             type: String,
             required: true,
@@ -27,10 +28,8 @@ const JobSchema = mongoose.Schema(
         lastDateToApply: Date,
         status: {
             type: String,
-            enum: ['pending', 'published', 'rejected']
-        },
-        applications: {
-            type: Array
+            enum: ['pending', 'published', 'rejected'],
+            default: 'pending'
         }
     },
     { timestamps: true }

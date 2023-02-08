@@ -1,4 +1,4 @@
-import * as Apiresponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
 import User from '../../models/User.js'
 
 export const show = async (req, res) => {
@@ -6,22 +6,34 @@ export const show = async (req, res) => {
         const userId = req.user.id
         const user = await User.findById(userId)
 
-        return Apiresponse.success(res, user)
+        return ApiResponse.success(res, user)
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
 export const update = async (req, res) => {
     try {
         const userId = req.user.id
-        const user = await User.findByIdAndUpdate(userId, {
-            //data to be updated
+
+        const { name, email, mobile, gender } = req.body
+
+        let user = await User.findOne({ email: email, _id: { $ne: userId } })
+        if (user) return ApiResponse.failed(res, 'Emial already in use.')
+
+        user = await User.findOne({ email: mobile, _id: { $ne: userId } })
+        if (user) return ApiResponse.failed(res, 'Mobile already in use.')
+
+        await user.update(userId, {
+            name,
+            email,
+            mobile,
+            gender
         })
 
-        return Apiresponse.success(res, user)
+        return ApiResponse.success(res, user)
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -32,9 +44,9 @@ export const uploadProfilePicture = async (req, res) => {
             profilePicture: req.file.filename
         })
 
-        return Apiresponse.success(res, user)
+        return ApiResponse.success(res, user)
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -45,9 +57,9 @@ export const uploadResume = async (req, res) => {
             resumePath: req.file.filename
         })
 
-        return Apiresponse.success(res, user)
+        return ApiResponse.success(res, user)
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 

@@ -1,18 +1,18 @@
 import jwt from 'jsonwebtoken'
 import { appConfig } from '../config/AppConfig.js'
-import * as Apiresponse from '../library/Apiresponse.js'
+import * as ApiResponse from '../library/ApiResponse.js'
 
 export const authCompany = async (req, res, next) => {
     try {
         const verified = verifyToken(req)
 
         if (verified.type != 'company')
-            return Apiresponse.forbidden(res, 'Access Denied')
+            return ApiResponse.forbidden(res, 'Access Denied')
 
         req.company = verified
         next()
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 
@@ -21,12 +21,12 @@ export const authUser = async (req, res, next) => {
         const verified = await verifyToken(req)
 
         if (!verified || verified.type != 'user')
-            return Apiresponse.forbidden(res, 'Access Denied')
+            return ApiResponse.forbidden(res, 'Access Denied')
 
         req.user = verified
         next()
     } catch (error) {
-        return Apiresponse.exception(res, error)
+        return ApiResponse.exception(res, error)
     }
 }
 

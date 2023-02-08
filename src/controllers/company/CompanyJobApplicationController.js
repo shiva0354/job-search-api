@@ -1,7 +1,7 @@
 import Job from '../../models/Job.js'
 import User from '../../models/User.js'
 import JobApplication from '../../models/JobApplication.js'
-import * as ApiResponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
 
 export const index = async (req, res) => {
     try {
@@ -55,11 +55,7 @@ export const accepReject = async (req, res) => {
 
         application.save()
 
-        return ApiResponse.success(
-            res,
-            application,
-            'Status changed successfully.'
-        )
+        return ApiResponse.success(res, null, 'Status changed successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

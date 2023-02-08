@@ -1,5 +1,5 @@
 import Validator from 'validatorjs'
-import * as ApiResponse from '../library/Apiresponse.js'
+import * as ApiResponse from '../library/ApiResponse.js'
 
 export const validate = (req, res, next, rules, message = null) => {
     const validator = new Validator(req.body, rules, message)
@@ -9,4 +9,3 @@ export const validate = (req, res, next, rules, message = null) => {
 
     next()
 }
-

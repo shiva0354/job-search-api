@@ -48,7 +48,7 @@ router.post('/jobs', authCompany, JobRequest.create, CompanyJobController.store)
 router.put(
     '/jobs/:jobId',
     authCompany,
-    CompanyRequest.update,
+    JobRequest.update,
     CompanyJobController.update
 )
 router.get('/jobs/:jobId', authCompany, CompanyJobController.show)

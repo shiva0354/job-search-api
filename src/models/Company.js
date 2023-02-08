@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import mongoosepaginate from 'mongoose-paginate'
 
 const CompanySchema = mongoose.Schema(
     {
@@ -25,6 +26,7 @@ const CompanySchema = mongoose.Schema(
             required: true,
             min: 5
         },
+        industry: String,
         logo: String,
         location: String,
         about: String

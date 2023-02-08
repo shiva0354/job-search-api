@@ -42,7 +42,7 @@ export const register = async (req, res) => {
 
         const hashPassword = bcrypt.hashSync(password, 10)
 
-        user = await User.create({
+        await User.create({
             name,
             email,
             mobile,
@@ -50,7 +50,7 @@ export const register = async (req, res) => {
             password: hashPassword
         })
 
-        return ApiResponse.success(res, user, 'Registration successfully.')
+        return ApiResponse.success(res, null, 'Registration successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

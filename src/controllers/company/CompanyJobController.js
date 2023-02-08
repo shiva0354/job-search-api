@@ -1,4 +1,5 @@
-import * as ApiResponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
+import Company from '../../models/Company.js'
 import Job from '../../models/Job.js'
 
 export const index = async (req, res) => {
@@ -19,13 +20,34 @@ export const store = async (req, res) => {
     try {
         const companyId = req.company.id
 
-        const { title } = req.body
+        const {
+            title,
+            location,
+            keyResponsibities,
+            requirements,
+            skillsRequired,
+            salary,
+            numberOfOpenings,
+            lastDateToApply
+        } = req.body
 
-        const job = await Job.create({
-            companyId: companyId
+        const company = await Company.findById(companyId)
+
+        await Job.create({
+            companyId: companyId,
+            title,
+            location: location ?? company.location,
+            aboutCompany: company.about,
+            companyLogo: company.logo,
+            keyResponsibities,
+            requirements,
+            skillsRequired,
+            salary,
+            numberOfOpenings,
+            lastDateToApply
         })
 
-        return ApiResponse.success(res, job, 'Job created successfully.')
+        return ApiResponse.success(res, null, 'Job created successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -36,7 +58,14 @@ export const update = async (req, res) => {
         const companyId = req.company.id
         const { jobId } = req.params
 
-        const { title } = req.body
+        const {
+            keyResponsibities,
+            requirements,
+            skillsRequired,
+            salary,
+            numberOfOpenings,
+            lastDateToApply
+        } = req.body
 
         const job = await Job.findById(jobId)
 
@@ -46,10 +75,15 @@ export const update = async (req, res) => {
             return ApiResponse.forbidden(res, 'Not authorised to edit.')
 
         await job.update({
-            //update data here
+            keyResponsibities,
+            requirements,
+            skillsRequired,
+            salary,
+            numberOfOpenings,
+            lastDateToApply
         })
 
-        return ApiResponse.success(res, job, 'Job updated successfully.')
+        return ApiResponse.success(res, null, 'Job updated successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

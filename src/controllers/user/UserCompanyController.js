@@ -1,4 +1,4 @@
-import * as ApiResponse from '../../library/Apiresponse.js'
+import * as ApiResponse from '../../library/ApiResponse.js'
 import Company from '../../models/Company.js'
 import Job from '../../models/Job.js'
 
