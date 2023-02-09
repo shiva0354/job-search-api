@@ -26,11 +26,16 @@ export const jobList = async (req, res) => {
 export const viewJob = async (req, res) => {
     try {
         const { jobId } = req.params
-        const job = await Job.findById(jobId)
 
-        if (!job) return ApiResponse.notfound(res, 'No Job listing found.')
+        let job = await Cache.get(`job_${jobId}`)
 
-        //TODO implement cache
+        if (!job) {
+            job = await Job.findById(jobId)
+
+            if (!job) return ApiResponse.notfound(res, 'No Job listing found.')
+            else await Cache.get(`job_${jobId}`, job, 60 * 60)
+        }
+
         return ApiResponse.success(res, job)
     } catch (error) {
         return ApiResponse.exception(res, error)

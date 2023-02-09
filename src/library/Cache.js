@@ -3,7 +3,6 @@ import { redisConfig } from '../config/AppConfig.js'
 
 export const get = async (key) => {
     key = redisConfig.prefix + key
-    console.log(key);
     return await redis.get(key)
 }
 
@@ -13,4 +12,14 @@ export const set = async (key, value, time = null) => {
         EX: time ?? 180,
         NX: true
     })
+}
+
+export const forget = async (key) => {
+    key = redisConfig.prefix + key
+    await redis.del(key)
+}
+
+export const has = async (key) => {
+    key = redisConfig.prefix + key
+    return await redis.exists(key)
 }

@@ -6,11 +6,15 @@ export const index = async (req, res) => {
     try {
         const companyId = req.company.id
 
-        const jobs = await Job.find({ companyId: companyId }).sort({
-            createdAt: -1
-        })
+        let jobs = await Cache.length(`jobs_${companyId}`)
 
-        //TODO implement cache
+        if (!jobs) {
+            jobs = await Job.find({ companyId: companyId }).sort({
+                createdAt: -1
+            })
+
+            await Cache.set(`jobs_${companyId}`, jobs, 60 * 60)
+        }
 
         return ApiResponse.success(res, jobs)
     } catch (error) {
@@ -50,7 +54,8 @@ export const store = async (req, res) => {
             lastDateToApply
         })
 
-        //TODO implement cache
+        await Cache.forget(`jobs_${companyId}`)
+        await Cache.forget(`jobs`)
 
         return ApiResponse.success(res, null, 'Job created successfully.')
     } catch (error) {
@@ -88,7 +93,10 @@ export const update = async (req, res) => {
             lastDateToApply
         })
 
-        //TODO implement cache
+        await Cache.forget(`jobs_${companyId}`)
+        await Cache.forget(`jobs`)
+        await Cache.forget(`job_${jobId}`)
+
         return ApiResponse.success(res, null, 'Job updated successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -100,7 +108,13 @@ export const show = async (req, res) => {
         const companyId = req.company.id
         const { jobId } = req.params
 
-        const job = await Job.findById(jobId)
+        let job = Cache.get(`job_${jobId}`)
+
+        if (!job) {
+            job = await Job.findById(jobId)
+
+            await Cache.set(`job_${jobId}`, job, 60 * 60)
+        }
 
         if (!job) return ApiResponse.notfound(res, 'Job not found.')
 
@@ -126,6 +140,10 @@ export const destroy = async (req, res) => {
             return ApiResponse.forbidden(res, 'Not authorised to view.')
 
         await job.delete()
+
+        await Cache.forget(`jobs_${companyId}`)
+        await Cache.forget(`jobs`)
+        await Cache.forget(`job_${jobId}`)
 
         return ApiResponse.success(res, null, 'Job deleted successfully.')
     } catch (error) {

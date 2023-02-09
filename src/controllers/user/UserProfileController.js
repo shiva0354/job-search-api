@@ -1,12 +1,19 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
+import * as Cache from '../../library/Cache.js'
 import User from '../../models/User.js'
 
 export const show = async (req, res) => {
     try {
         const userId = req.user.id
-        const user = await User.findById(userId)
 
-        //TODO implement cache
+        let user = await Cache.get(`user_${userId}`)
+
+        if (!user) {
+            user = await User.findById(userId)
+
+            await Cache.set(`user_${userId}`, user, 60 * 60)
+        }
+
         return ApiResponse.success(res, user)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -32,7 +39,7 @@ export const update = async (req, res) => {
             gender
         })
 
-        //TODO implement cache
+        await Cache.forget(`user_${userId}`)
 
         return ApiResponse.success(res, null, 'Profile updated successfully.')
     } catch (error) {
@@ -43,11 +50,12 @@ export const update = async (req, res) => {
 export const uploadProfilePicture = async (req, res) => {
     try {
         const userId = req.user.id
-        const user = await User.findByIdAndUpdate(userId, {
+
+        await User.findByIdAndUpdate(userId, {
             profilePicture: req.file.filename
         })
 
-        //TODO implement cache
+        await Cache.forget(`user_${userId}`)
         return ApiResponse.success(
             res,
             null,
@@ -61,12 +69,14 @@ export const uploadProfilePicture = async (req, res) => {
 export const uploadResume = async (req, res) => {
     try {
         const userId = req.user.id
-        const user = await User.findByIdAndUpdate(userId, {
+
+        await User.findByIdAndUpdate(userId, {
             resumePath: req.file.filename
         })
 
-        //TODO implement cache
-        return ApiResponse.success(res, user)
+        await Cache.forget(`user_${userId}`)
+        
+        return ApiResponse.success(res, null, 'Resume uploaded successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

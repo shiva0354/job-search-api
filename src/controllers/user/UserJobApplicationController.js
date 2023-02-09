@@ -1,4 +1,5 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
+import * as Cache from '../../library/Cache.js'
 import Job from '../../models/Job.js'
 import JobApplication from '../../models/JobApplication.js'
 import User from '../../models/User.js'
@@ -7,9 +8,18 @@ export const index = async (req, res) => {
     try {
         const userId = req.user.id
 
-        const applications = await JobApplication.find({ userId: userId })
+        let applications = await Cache.get(`user_applications_${userId}`)
 
-        //TODO  implement cache
+        if (!applications) {
+            applications = await JobApplication.find({ userId: userId })
+
+            await Cache.get(
+                `user_applications_${userId}`,
+                applications,
+                60 * 60
+            )
+        }
+
         return ApiResponse.success(res, applications)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -46,7 +56,8 @@ export const apply = async (req, res) => {
             questions
         })
 
-        //TODO fire an email on successfull job application
+        await Cache.forget(`user_applications_${userId}`)
+        await Cache.forget(`job_applications_${jobId}`)
 
         return ApiResponse.success(
             res,
@@ -80,7 +91,8 @@ export const cancelApplication = async (req, res) => {
         application.status = 'cancelled'
         application.save()
 
-        //TODO fire an email to candidate regarding status of the application
+        await Cache.forget(`user_applications_${userId}`)
+        await Cache.forget(`job_applications_${application.jobId}`)
 
         return ApiResponse.success(
             res,

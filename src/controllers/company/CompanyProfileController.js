@@ -1,12 +1,20 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
+import * as Cache from '../../library/Cache.js'
 import Company from '../../models/Company.js'
 import { CompanyProfile } from '../../resources/CompanyResource.js'
 
 export const show = async (req, res) => {
     try {
         const companyId = req.company.id
-        const company = await Company.findById(companyId)
-        //TODO implement caching
+
+        let company = Cache.get(`company_${companyId}`)
+
+        if (!company) {
+            company = await Company.findById(companyId)
+
+            await Cache.set(`company_${companyId}`, company, 60 * 60)
+        }
+
         return ApiResponse.success(res, CompanyProfile(company))
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -39,7 +47,7 @@ export const update = async (req, res) => {
             about
         })
 
-        //TODO implement cache
+        await Cache.forget(`company_${companyId}`)
 
         return ApiResponse.success(res, null, 'Profile updated successfully.')
     } catch (error) {
@@ -51,11 +59,12 @@ export const uploadLogo = async (req, res) => {
     try {
         const companyId = req.company.id
 
-        const company = await Company.findByIdAndUpdate(companyId, {
+        await Company.findByIdAndUpdate(companyId, {
             logo: req.file.filename
         })
 
-        //TODO implement cache
+        await Cache.forget(`company_${companyId}`)
+
         return ApiResponse.success(res, null, 'Logo Uploaded successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)

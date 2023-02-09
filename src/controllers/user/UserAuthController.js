@@ -51,7 +51,17 @@ export const register = async (req, res) => {
             password: hashPassword
         })
 
-        //TODO fire and email
+        const { response } = await mail.sendMail({
+            from: `<${mailConfig.mail_from_name}> <${mailConfig.mail_from_address}>`,
+            to: user.email,
+            subject: 'Regisration Successfull.',
+            html: `<b>Welcome ${company.name},</b>
+            Your registration on Job Search portal has been done successfully.
+            Now you are ready to get your job.
+            
+            Warm Regards,
+            Team Job Search Portal`
+        })
 
         return ApiResponse.success(res, null, 'Registration successfully.')
     } catch (error) {
@@ -71,7 +81,6 @@ export const changePassword = async (req, res) => {
         user.password = hashPassword
         await user.save()
 
-        //TODO fire an email
         const { response } = await mail.sendMail({
             from: `<${mailConfig.mail_from_name}> <${mailConfig.mail_from_address}>`,
             to: user.email,

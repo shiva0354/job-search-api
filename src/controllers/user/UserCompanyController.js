@@ -1,4 +1,5 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
+import * as Cache from '../../library/Cache.js'
 import Company from '../../models/Company.js'
 import Job from '../../models/Job.js'
 
@@ -6,9 +7,14 @@ export const viewCompany = async (req, res) => {
     try {
         const { companyId } = req.params
 
-        const company = await Company.findById(companyId)
+        let company = await Cache.get(`company_${companyId}`)
 
-        //TODO implement cache
+        if (!company) {
+            company = await Company.findById(companyId)
+
+            await Cache.set(`company_${companyId}`, company, 60 * 60)
+        }
+
         return ApiResponse.success(res, company)
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -23,9 +29,14 @@ export const viewCompanyJobs = async (req, res) => {
 
         if (!company) return ApiResponse.notfound(res, 'Company Not Found')
 
-        const jobs = await Job.find({ companyId: companyId })
+        let jobs = await Cache.get(`jobs_${companyId}`)
 
-        //TODO implement cache
+        if (!jobs) {
+            jobs = await Job.find({ companyId: companyId })
+
+            await Cache.set(`jobs_${companyId}`, jobs, 60 * 60)
+        }
+
         return ApiResponse.success(res, jobs)
     } catch (error) {
         return ApiResponse.exception(res, error)

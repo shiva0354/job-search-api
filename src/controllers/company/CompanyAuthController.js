@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import Company from '../../models/Company.js'
 import * as ApiResponse from '../../library/ApiResponse.js'
 import { appConfig } from '../../config/AppConfig.js'
+import { mail } from '../../library/Mail.js'
 
 export const login = async (req, res) => {
     try {
@@ -23,7 +24,7 @@ export const login = async (req, res) => {
                 expiresIn: '2h'
             }
         )
-        
+
         return ApiResponse.success(res, { token: token })
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -54,7 +55,20 @@ export const register = async (req, res) => {
             about: about ?? ''
         })
 
-        //TODO fire register event and send email
+        const { response } = await mail.sendMail({
+            from: `<${mailConfig.mail_from_name}> <${mailConfig.mail_from_address}>`,
+            to: company.email,
+            subject: 'Regisration Successfull.',
+            html: `<b>Welcome ${company.name},</b>
+            Your registration on Job Search portal has been done successfully.
+            Now you are ready to post job listing.
+            
+            Warm Regards,
+            Team Job Search Portal`
+        })
+
+        console.log(response)
+
         return ApiResponse.success(res, null, 'Registration successfull.')
     } catch (error) {
         return ApiResponse.exception(res, error)
@@ -72,7 +86,6 @@ export const changePassword = async (req, res) => {
             password: hasPassword
         })
 
-        //TODO fire password changed event and send email
         return ApiResponse.success(res, null, 'Password changed successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)
