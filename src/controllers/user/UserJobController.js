@@ -1,6 +1,7 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
 import Job from '../../models/Job.js'
 import * as Cache from '../../library/Cache.js'
+import * as JobResource from '../../resources/JobResource.js'
 
 export const jobList = async (req, res) => {
     try {
@@ -10,14 +11,14 @@ export const jobList = async (req, res) => {
         console.log(jobs)
 
         if (!jobs) {
-            jobs = await Job.find({
+            let jobs = await Job.find({
                 status: 'published'
             }).sort({ createdAt: -1 })
 
             await Cache.set('jobs', jobs)
         }
 
-        return ApiResponse.success(res, jobs)
+        return ApiResponse.success(res, JobResource.collection(jobs))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -36,7 +37,7 @@ export const viewJob = async (req, res) => {
             else await Cache.get(`job_${jobId}`, job, 60 * 60)
         }
 
-        return ApiResponse.success(res, job)
+        return ApiResponse.success(res, JobResource.make(job))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

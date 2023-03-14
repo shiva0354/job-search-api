@@ -1,6 +1,7 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
 import Company from '../../models/Company.js'
 import Job from '../../models/Job.js'
+import * as JobResource from '../../resources/JobResource.js'
 
 export const index = async (req, res) => {
     try {
@@ -16,7 +17,7 @@ export const index = async (req, res) => {
             await Cache.set(`jobs_${companyId}`, jobs, 60 * 60)
         }
 
-        return ApiResponse.success(res, jobs)
+        return ApiResponse.success(res, JobResource.collection(jobs))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

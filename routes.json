@@ -1,0 +1,36 @@
+{
+    "userRoute": {
+        "register": "Register",
+        "login": "Login",
+        "change-password": "Change Password",
+        "profile/show": "Profile Show",
+        "profile/update": "Profile Update",
+        "profile/upload/photo": "Profile photo upload",
+        "profile/resume/upload": "Resume",
+        "profile/resume/download": "Resume Download",
+        "jobs": "Jobs List",
+        "jobs/:jobId": "View Job Detail",
+        "companies/:companyId": "View Company Detail",
+        "companies/:companyId/jobs": "View company jobs",
+        "jobs/:jobId/apply": "Apply to job",
+        "applications": "Applications List",
+        "applications/:applicationId/cancel": "Cancel Application"
+    },
+    "companyRoutes": {
+        "company/login": "Company Login",
+        "company/register": "Company Register",
+        "company/change-password": "Change Password",
+        "company/profile/show": "Company profile show",
+        "company/profile/update": "Profile update",
+        "company/profile/upload/logo": "Logo upload",
+        "company/jobs": "list of Jobs",
+        "company/jobs": "Create new job with method post",
+        "company/jobs/:jobId": "View Job detail",
+        "company/jobs/:jobId": "Update job with method put",
+        "company/jobs/:jobId": "Delete job with method delete",
+        "company/jobs/:jobId/applications": "View Job Applications list",
+        "company/applications/:applicationId": "View Particular Job application",
+        "company/applications/:applicationId/status": "Accept or reject job application",
+        "company/users/:userId": "View User Detail"
+    }
+}

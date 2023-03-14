@@ -3,7 +3,8 @@ dotenv.config()
 
 export const appConfig = {
     app_name: process.env.APP_NAME || 'Job Search',
-    jwt_secret: process.env.JWT_SECRET
+    jwt_secret: process.env.JWT_SECRET,
+    app_url:process.env.APP_URL
 }
 
 export const dbConfig = {

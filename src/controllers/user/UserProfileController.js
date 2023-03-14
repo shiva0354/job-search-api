@@ -1,6 +1,8 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
 import * as Cache from '../../library/Cache.js'
 import User from '../../models/User.js'
+// import * as UserProfileResource from '../../resources/UserProfileResource.js'
+import * as UserResumeResource from '../../resources/UserResumeResource.js'
 
 export const show = async (req, res) => {
     try {
@@ -14,7 +16,7 @@ export const show = async (req, res) => {
             await Cache.set(`user_${userId}`, user, 60 * 60)
         }
 
-        return ApiResponse.success(res, user)
+        return ApiResponse.success(res, UserResumeResource.fullResume(user))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -75,7 +77,7 @@ export const uploadResume = async (req, res) => {
         })
 
         await Cache.forget(`user_${userId}`)
-        
+
         return ApiResponse.success(res, null, 'Resume uploaded successfully.')
     } catch (error) {
         return ApiResponse.exception(res, error)

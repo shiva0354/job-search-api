@@ -1,7 +1,7 @@
 import * as ApiResponse from '../../library/ApiResponse.js'
 import * as Cache from '../../library/Cache.js'
 import Company from '../../models/Company.js'
-import { CompanyProfile } from '../../resources/CompanyResource.js'
+import * as CompanyResource from '../../resources/CompanyResource.js'
 
 export const show = async (req, res) => {
     try {
@@ -15,7 +15,7 @@ export const show = async (req, res) => {
             await Cache.set(`company_${companyId}`, company, 60 * 60)
         }
 
-        return ApiResponse.success(res, CompanyProfile(company))
+        return ApiResponse.success(res, CompanyResource.companyProfile(company))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

@@ -2,6 +2,8 @@ import * as ApiResponse from '../../library/ApiResponse.js'
 import * as Cache from '../../library/Cache.js'
 import Company from '../../models/Company.js'
 import Job from '../../models/Job.js'
+import * as CompanyResource from '../../resources/CompanyResource.js'
+import * as JobResource from '../../resources/JobResource.js'
 
 export const viewCompany = async (req, res) => {
     try {
@@ -15,7 +17,7 @@ export const viewCompany = async (req, res) => {
             await Cache.set(`company_${companyId}`, company, 60 * 60)
         }
 
-        return ApiResponse.success(res, company)
+        return ApiResponse.success(res, CompanyResource.make(company))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }
@@ -37,7 +39,7 @@ export const viewCompanyJobs = async (req, res) => {
             await Cache.set(`jobs_${companyId}`, jobs, 60 * 60)
         }
 
-        return ApiResponse.success(res, jobs)
+        return ApiResponse.success(res, JobResource.collection(jobs))
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

@@ -1,23 +1,22 @@
-export const CompanyProfile = (data) => {
+import { appConfig } from '../config/AppConfig.js'
+
+const handle = (company) => {
     return {
-        _id: data._id,
-        name: data.name,
-        email: data.email,
-        location: data.location,
-        about: data.about,
-        logo: data.logo
+        _id: company._id,
+        name: company.name,
+        email: company.email,
+        location: company.location,
+        about: company.about,
+        logo: company.logo ? appConfig.app_url + '/' + company.logo : ''
     }
 }
 
-export const CompanyList = (data) => {
-    return data.map(({ _id, name, email, location, about, logo }) => {
-        return {
-            _id,
-            name,
-            email,
-            location,
-            about,
-            logo
-        }
+export const make = (company) => {
+    return handle(company)
+}
+
+export const collection = (companys) => {
+    return companys.map((company) => {
+        return handle(company)
     })
 }
