@@ -18,7 +18,10 @@ export const jobList = async (req, res) => {
             await Cache.set('jobs', jobs)
         }
 
-        return ApiResponse.success(res, JobResource.collection(jobs))
+        return ApiResponse.success(
+            res,
+            JobResource.collection(JSON.parse(jobs))
+        )
     } catch (error) {
         return ApiResponse.exception(res, error)
     }

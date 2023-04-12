@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { mailConfig } from '../config/AppConfig.js'
 
-export const mail = () =>
+export const mail =
     nodemailer.createTransport({
         // host: mailConfig.host,
         port: mailConfig.port
