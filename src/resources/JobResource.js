@@ -3,7 +3,13 @@ const handle = (job) => {
         _id: job._id,
         companyId: job.companyId,
         industry: job.industry,
-        title: job.title
+        title: job.title,
+        location: job.location,
+        companyLogo: job.companyLogo,
+        salary: job.salary,
+        skillsReruired: job.skillsReruired,
+        lastDateToApply: job.lastDateToApply,
+        companyName:job.companyName
     }
 }
 
